@@ -6,12 +6,16 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jonmid.tallerasynctask.Adapters.PostAdapter;
 import com.jonmid.tallerasynctask.Models.Post;
 import com.jonmid.tallerasynctask.Parser.Json;
 
@@ -24,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     Button boton;
     TextView texto;
     List<Post> myPost;
+    RecyclerView recyclerView;
+    PostAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +38,15 @@ public class MainActivity extends AppCompatActivity {
 
         cargador = (ProgressBar) findViewById(R.id.cargador);
         boton = (Button) findViewById(R.id.boton);
-        texto = (TextView) findViewById(R.id.texto);
+        //texto = (TextView) findViewById(R.id.texto);
+
+        recyclerView = (RecyclerView) findViewById(R.id.myRecycler);
+        // permite manejar los componentes en un recyclerView
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        //Establece orientacion vertical
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        // se aplica orientacion al recyclerView
+        recyclerView.setLayoutManager(linearLayoutManager);
     }
 
     public Boolean isOnLine(){
@@ -56,12 +70,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void cargarDatos(){
-        // texto.append("JSON cargado correctamente.");
-        if (myPost != null){
-            for (Post post:myPost){
-                texto.append(post.getTitle() + "\n");
-            }
-        }
+        // crea objeto de tipo PostAdapter y retorna el item de mi layout item.xml
+        adapter = new PostAdapter(getApplicationContext(),myPost);
+
+        //inyectar item en my recylerView
+        recyclerView.setAdapter(adapter);
+
     }
 
     private class MyTask extends AsyncTask<String, String, String>{
